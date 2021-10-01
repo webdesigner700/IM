@@ -1,0 +1,230 @@
+Table  Autumn2019;
+Table  Spring2019;
+Table  Autumn2020;
+Table  Spring2020;
+int[] semAvg = new int[4];
+int[] hue = {117, 246, 342, 203};
+int[] sat = {71, 55, 52, 226};
+int sizeA19 = 0;//semester average value for Autumn 2019
+int sizeS19 = 0;//semester average value for spring 2019
+int sizeA20 = 0;//semester average value for Autumn 2020
+int sizeS20 = 0;//semester average value for spring 2020
+int rad  = 30; //first circle's radius
+int[][] sems = { {23, 30, 28, 29, 30, 23, 14, 28, 34, 29, 35, 32}, // Autumn 2019 averages
+  {19, 25, 26, 28, 27, 32, 25, 26, 25, 25, 25, 33}, // Spring 2019 averages
+  {19, 4, 3, 2, 2, 2, 3, 4, 4, 5, 5, 6}, // Autumn 2020 averages
+  {6, 9, 7, 3, 8, 8, 8, 9, 11, 6, 7, 9}  };           // Spring 2020 averages
+//the semesters selected
+int selection1 = 2;
+int selection2 = 1;
+//button colour value
+int selected1 = 360;
+int selected2 = 360;
+int selected3 = 360;
+int selected4 = 360;
+//button bar's x and y
+int buttonX = 50;
+int buttonY = 820;
+//A19=0;
+//S19=1;
+//A20=2;
+//S20=3;
+int mode=1;
+int x;
+int y;
+PImage bg;
+void setup() {
+  size(1300, 900);
+  x = width/2;
+  y = height/2;
+  colorMode(HSB, 360, 100, 100);
+   bg = loadImage("bg.png");
+  //AUTUMN 2019
+  Autumn2019 = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=2019-03-11T22%3A25%3A15.287&rToDate=2019-06-09T22%3A25%3A15.287&rFamily=people&rSensor=+PC00.05+%28In%29", "csv");
+  for (int i = 0; i<Autumn2019.getRowCount(); i++) {//loop to calculate average
+    sizeA19 += Autumn2019.getInt(i, 1);
+  }
+  sizeA19 = sizeA19/Autumn2019.getRowCount(); //the semester average
+
+  //SPRING 2019
+  Spring2019 = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=2019-07-22T22%3A25%3A15.287&rToDate=2019-10-18T22%3A25%3A15.287&rFamily=people&rSensor=+PC00.05+%28In%29", "csv");
+  for (int i = 0; i<Spring2019.getRowCount(); i++) {
+    sizeS19 += Spring2019.getInt(i, 1);
+  }
+  sizeS19 = sizeS19/Autumn2019.getRowCount();//the semester average
+
+  //AUTUMN 2020
+  Autumn2020 = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=2020-03-09T22%3A25%3A15.287&rToDate=2020-06-12T22%3A25%3A15.287&rFamily=people&rSensor=+PC00.05+%28In%29", "csv");
+  for (int i = 0; i<Autumn2020.getRowCount(); i++) {
+    sizeA20 += Autumn2020.getInt(i, 1);
+  }
+  sizeA20 = sizeA20/Autumn2020.getRowCount();//the semester average
+
+  //SPRING 2020
+  Spring2020 = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=2020-07-27T22%3A25%3A15.287&rToDate=2020-10-23T22%3A25%3A15.287&rFamily=people&rSensor=+PC00.05+%28In%29", "csv");
+  for (int i = 0; i<Spring2020.getRowCount(); i++) {
+    sizeS20 += Spring2020.getInt(i, 1);
+  }
+  sizeS20 = sizeS20/Spring2020.getRowCount();//the semester average
+
+  semAvg[0] = sizeA19;
+  semAvg[1] = sizeS19;
+  semAvg[2] = sizeA20;
+  semAvg[3] = sizeS20;
+}
+void draw() {
+  background(bg);
+  //buttons
+  strokeWeight(1);
+  fill(selected1);
+  rect(buttonX, buttonY, 80, 50);
+  fill(selected2);
+  rect(buttonX+84, buttonY, 80, 50);
+  fill(selected3);
+  rect(buttonX+168, buttonY, 80, 50);
+  fill(selected4);
+  rect(buttonX+252, buttonY, 80, 50);
+  fill(0);
+  textSize(10);
+  text("Autumn 2019       Spring 2019       Autumn 2020       Spring 2020",buttonX+5,buttonY+30);
+
+  //main mode
+  if (mode==1) {
+    bg = loadImage("bg.png");
+    int diameter = 50;
+    for (int i =0; i<4; i++) {
+      noFill();
+      strokeWeight(semAvg[i]);  
+      stroke(hue[i], sat[i], 95);
+      ellipse(x, y, diameter, diameter);
+      diameter+=100;
+    }
+    diameter = 50;
+    for (int i = 0; i<4; i++) { //checks if the mouse is hovered over each circle
+      if (overCircle1(diameter, semAvg[i]) || overCircle2(diameter, semAvg[i])) { //if the mouse is hovered over circle1/the left circle
+        strokeWeight(0);
+        fill(360);
+        rect(mouseX, mouseY-20, 30, 30);
+        fill(0);
+        textSize(20);
+        text(semAvg[i], mouseX+2, mouseY);
+      }
+      diameter+=100;
+    }
+  } else {
+    bg = loadImage("bg2.png");
+    int b = 95; //initial brightness value for circle colour
+    int radius = rad;
+    for (int i = 0; i<12; i++) {//loop to create each circle (the brightness and size are changed in every loop
+      strokeWeight(sems[selection1][i]);
+      stroke(hue[selection1], sat[selection1], b);
+      strokeCap(SQUARE);
+      noFill();
+      arc(x, y, radius, radius, PI/2, 3*PI/2); //left circle
+      strokeWeight(sems[selection2][i]);
+      stroke(hue[selection2], sat[selection2], b);
+      noFill();
+      arc(x, y, radius, radius, radians(-90), radians(90));//right circle
+      radius+=70;//increase size for the next circle
+      b-=5;//decrease brightness for the next circle
+    }
+    radius = rad;//resets the value to start from the first circle 
+    for (int i = 0; i<12; i++) { //checks if the mouse is hovered over each circle
+      if (overCircle1(radius, sems[selection1][i])) { //if the mouse is hovered over circle1/the left circle
+        strokeWeight(0);
+        fill(360);
+        rect(mouseX, mouseY-20, 125, 30);
+        fill(0);
+        textSize(20);
+        text("Week " + (i+1) + ": " + sems[selection1][i], mouseX+2, mouseY);
+      } else if (overCircle2(radius, sems[selection2][i])) {//if the mouse is hovered over circle2/the right circle
+        strokeWeight(0);
+        fill(360);
+        rect(mouseX, mouseY-20, 120, 30);
+        fill(0);
+        textSize(20);
+        text("Week " + (i+1) + "- " + sems[selection2][i], mouseX+2, mouseY);
+      }
+
+      radius+=70;
+    }
+  }
+}
+
+boolean overCircle1(int diameter, int strokeWeight) { // returns true if the mouse is hovering over the first half of the circle
+  float disX = x - mouseX;
+  float disY = y - mouseY;
+  float position = sqrt(sq(disX) + sq(disY));
+  float strokeDist = strokeWeight-strokeWeight/2;
+  if (strokeWeight == 0) {
+    strokeDist=0.5;
+  }
+  if (position < diameter/2+strokeDist && position > diameter/2-strokeDist && mouseX<=x) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+boolean overCircle2(int diameter, int strokeWeight) {// returns true if the mouse is hovering over the second half of the circle
+  float disX = x - mouseX;
+  float disY = y - mouseY;
+  float position = sqrt(sq(disX) + sq(disY));
+  float strokeDist = strokeWeight-strokeWeight/2;
+  if (strokeWeight == 0) {
+    strokeDist=0.5;
+  }
+  if (position < diameter/2+strokeDist && position > diameter/2-strokeDist && mouseX>=x) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+boolean overRect(int rectx, int recty) {// returns true if the mouse is hovering over the second half of the circle
+  if (mouseX >= rectx && mouseX <= rectx+80 && mouseY >= recty && mouseY <= recty+50) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void keyPressed() {
+  if (key == 49) {
+    mode = 1;
+  }
+  if (key == 50) {
+    mode = 2;
+  }
+}
+void mouseClicked() { //button selections
+  if (mouseButton == LEFT) {
+    if (overRect(buttonX, buttonY)) {
+      selection1 = 0;
+      selected1 = 180; selected2=360; selected3=360; selected4=360;
+    } else if (overRect(buttonX+84, buttonY)) {
+      selection1 = 1;
+      selected1 = 360; selected2=180; selected3=360; selected4=360;
+    } else if (overRect(buttonX+168, buttonY)) {
+      selection1 = 2;
+      selected1 = 360; selected2=360; selected3=180; selected4=360;
+    } else if (overRect(buttonX+252, buttonY)) {
+      selection1 = 3;
+      selected1 = 360; selected2=360; selected3=360; selected4=180;
+    }
+  } else if (mouseButton == RIGHT) {
+    if (overRect(buttonX, buttonY)) {
+      selection2 = 0;
+      selected1 = 180; selected2=360; selected3=360; selected4=360;
+    } else if (overRect(buttonX+84, buttonY)) {
+      selection2 = 1;
+      selected1 = 360; selected2=180; selected3=360; selected4=360;
+    } else if (overRect(buttonX+168, buttonY)) {
+      selection2 = 2;
+      selected1 = 360; selected2=360; selected3=180; selected4=360;
+    } else if (overRect(buttonX+252, buttonY)) {
+      selection2 = 3;
+      selected1 = 360; selected2=360; selected3=360; selected4=180;
+    }
+  }
+}
