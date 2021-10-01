@@ -93,12 +93,12 @@ void draw() {
 
   //main mode
   if (mode==1) {
-      fill(360);
+    bg = loadImage("bg3.png");
+    fill(360);
     textSize(15);
     text("Selection 1: " + selections[selection1],206,175);
     text("Selection 2: " + selections[selection2],882,175);
-
-    bg = loadImage("bg3.png");
+    
     int diameter = 50;
     noStroke();
     fill(55,5,88);
@@ -107,7 +107,7 @@ void draw() {
       noFill();
       strokeWeight(semAvg[i]);  
       stroke(hue[i], sat[i], 95);
-      ellipse(x, y, diameter, diameter);
+      ellipse(x, y, diameter, diameter);      
       diameter+=100;
     }
     diameter = 50;
@@ -122,12 +122,28 @@ void draw() {
       }
       diameter+=100;
     }
+    
+    stroke(hue[0], sat[0], 95);
+    strokeWeight(2);
+    line(620,427,391,427);
+    stroke(hue[1], sat[1], 95);
+    line(594,492,391,492);
+    stroke(hue[2], sat[2], 95);
+    line(616,546,391,546);
+    stroke(hue[3], sat[3], 95);
+    line(636,600,391,600);
+    fill(0);
+    textSize(20);
+    text("Autumn 2019", 247, 427);
+    text("Spring 2019", 259,492);
+    text("Autumn 2020", 245,546);
+    text("Spring 2020", 258,600);
   } else {
     bg = loadImage("bg2.png");
-  fill(0);
+  fill(360);
   textSize(15);
-  text("Selection 1: " + selections[selection1],116,735);
-  text("Selection 2: " + selections[selection2],950,735);
+  text("Selection 1: " + selections[selection1],232,24);
+  text("Selection 2: " + selections[selection2],910,24);
 
     int b = 95; //initial brightness value for circle colour
     int radius = rad;
