@@ -17,6 +17,8 @@ int[][] sems = { {23, 30, 28, 29, 30, 23, 14, 28, 34, 29, 35, 32}, // Autumn 201
   {6, 9, 7, 3, 8, 8, 8, 9, 11, 6, 7, 9}  };           // Spring 2020 averages
 int[] max = {126,223,9,67};
 int[] sum = {77765,103298,22698,21248};
+int statsX = 16;
+int statsY = 170;
 //the semesters selected
 int selection1 = 2;
 int selection2 = 0;
@@ -36,14 +38,16 @@ int mode=1;
 int x;
 int y;
 PImage bg;
+PImage logo;
 int rDist = 68;
-
 void setup() {
   size(1300, 850);
   x = width/2;
   y = height/2;
   colorMode(HSB, 360, 100, 100);
   bg = loadImage("bg1.png");
+  logo = loadImage("Logo.png");
+
   //AUTUMN 2019
   Autumn2019 = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=2019-03-11T22%3A25%3A15.287&rToDate=2019-06-09T22%3A25%3A15.287&rFamily=people&rSensor=+PC00.05+%28In%29", "csv");
   for (int i = 0; i<Autumn2019.getRowCount(); i++) {//loop to calculate average
@@ -95,8 +99,7 @@ void draw() {
   fill(360);
   textSize(12);
   text("Select two semesters to compare", buttonX, buttonY-10);
-  textSize(16);
-  text("Max:\nSum:", 5, 441);
+  
   
   //main mode
   if (mode==1) {
@@ -105,19 +108,20 @@ void draw() {
     textSize(15);
     text("Selection 1: " + selections[selection1], 206, 175);
     text("Selection 2: " + selections[selection2], 882, 175);
-    textSize(22);
-    text("Average people count per semester", 456, 175);
+    textSize(24);
+    text("Average people count per semester", 440, 175);
     textSize(12);
     text("use left click for selection 1 and right click for selection 2 - press '1' to go to the main graph and press'2' to go into comparison mode", 447, 810);
     
-    for (int i = 226; i < 1185; i++) {
+    for (int i = 198; i < 1185; i++) {
     float a = random(360);
-    float b = random(30);
-    float c = random(50);
+    float b = random(100);
+    float c = random(30);
     stroke(a,b,c);
     line(i, 0, i, 134);
   }
     int diameter = 50;
+    
     noStroke();
     fill(55, 5, 88);
     ellipse(x, y, 350, 350);
@@ -144,14 +148,14 @@ void draw() {
     text("Spring 2019", 259, 500);
     text("Autumn 2020", 245, 554);
     text("Spring 2020", 258, 608);
-
+    image(logo,0,0);
     diameter = 50;
     for (int i = 0; i<4; i++) { //checks if the mouse is hovered over each circle
       if (overCircle1(diameter, semAvg[i]) || overCircle2(diameter, semAvg[i])) { //if the mouse is hovered over circle1/the left circle
         strokeWeight(0);
         fill(360);
         textSize(16);
-        text(max[i]+"\n" + sum[i], 44, 441);
+        text("\n" + max[i]+"\n" + sum[i], statsX+39, statsY);
         rect(mouseX, mouseY-20, 30, 30);
         fill(0);
         textSize(20);
@@ -176,11 +180,11 @@ void draw() {
       stroke(hue[selection1], sat[selection1], b);
       strokeCap(SQUARE);
       noFill();
-      arc(x, y, radius, radius, PI/2, 3*PI/2); //left circle
+      arc(x+0.0001, y, radius, radius, PI/2, 3*PI/2); //left circle
       strokeWeight(sems[selection2][i]);
       stroke(hue[selection2], sat[selection2], b);
       noFill();
-      arc(x, y, radius, radius, radians(-90), radians(90));//right circle
+      arc(x-0.0001, y, radius, radius, radians(-90), radians(90));//right circle
       radius+=rDist;//increase size for the next circle
       b-=5;//decrease brightness for the next circle
     }
@@ -191,7 +195,7 @@ void draw() {
         fill(360);
         rect(mouseX, mouseY-20, 125, 30);
         textSize(16);
-        text(max[selection1]+"\n" + sum[selection1], 44, 441);
+        text("\n" +max[selection1]+"\n" + sum[selection1], statsX+39, statsY);
         fill(0);
         textSize(20);
         text("Week " + (i+1) + ": " + sems[selection1][i], mouseX+2, mouseY);
@@ -200,15 +204,17 @@ void draw() {
         strokeWeight(0);
         fill(360);
         rect(mouseX, mouseY-20, 120, 30);
-        text(max[selection2]+"\n" + sum[selection2], 44, 441);
+        text("\n" + max[selection2]+"\n" + sum[selection2], statsX+39, statsY);
         fill(0);
         textSize(20);
         text("Week " + (i+1) + "- " + sems[selection2][i], mouseX+2, mouseY);
       }
-
       radius+=rDist;
     }
   }
+      fill(360);
+      textSize(16);
+      text("Semester's statistics:\nMax:\nSum:", statsX, statsY);
 }
 
 boolean overCircle1(int diameter, int strokeWeight) { // returns true if the mouse is hovering over the first half of the circle
